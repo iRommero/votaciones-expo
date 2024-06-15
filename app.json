@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "scan-qr",
-    "slug": "scan-qr",
+    "name": "votaciones-expo",
+    "slug": "votaciones-expo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/melvin.gif",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

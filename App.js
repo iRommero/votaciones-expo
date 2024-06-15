@@ -1,20 +1,26 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LoginScreen from './pages/LoginScreen';
+import ScanIDScreen from './pages/ScanIDScreen';
+import CandidatesScreen from './pages/CandidatesScreen.js';
+import CandidateDetailsScreen from './pages/CandidateDetailsScreen.js';
+import VotingResultsScreen from './pages/VotingResultsScreen.js';
 
-export default function App() {
+const Stack = createStackNavigator();
+
+function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Identificarse" component={ScanIDScreen} />
+         <Stack.Screen name="Votar" component={CandidatesScreen} />
+         <Stack.Screen name="DetalleDelCandidato" component={CandidateDetailsScreen} />
+          <Stack.Screen name="ResultadosVotacion" component={VotingResultsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
