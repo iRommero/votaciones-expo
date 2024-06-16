@@ -16,7 +16,7 @@ const LoginScreen = ({ navigation }) => {
     try {
       const loginService = new LoginService();
       await loginService.login(nombreUsuario, password);
-      navigation.navigate('Identificarse');
+      navigation.navigate('AvisoDePrivacidad');
     } catch (error) {
       alert('Usuario o contraseña incorrectos');
       console.error(error);
