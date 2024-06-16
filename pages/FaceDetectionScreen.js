@@ -9,8 +9,8 @@ const FaceDetectionScreen = ({ navigation }) => {
 
   const handleFacesDetected = ({ faces }) => {
     if (faces == undefined || faces.length === 0) {
-      //alert('No se detectó ninguna cara');
-      //navigation.navigate('Login');
+      alert('No se detectó ninguna cara');
+      navigation.navigate('Login');
     }
   };
 
