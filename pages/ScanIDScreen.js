@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Button, Text, StyleSheet } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { Camera } from 'expo-camera';
+import { useIsFocused } from '@react-navigation/native';
 
 function ScanIDScreen({ navigation }) {
-  const [facing, setFacing] = useState('back');
-  const [permission, requestPermission] = useCameraPermissions();
+  const [facing, setFacing] = useState(Camera.Constants.Type.back);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const isFocused = useIsFocused();
 
   if (!permission) {
     return <View style={styles.centeredContainer}><Text>Cargando permisos...</Text></View>;
@@ -20,12 +22,12 @@ function ScanIDScreen({ navigation }) {
   }
 
   const toggleFacing = () => {
-    setFacing(facing === 'back' ? 'front' : 'back');
+    setFacing(facing === Camera.Constants.Type.back ? Camera.Constants.Type.front : Camera.Constants.Type.back);
   };
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing} />
+      { isFocused && <Camera style={styles.camera} type={facing} /> }
       <View style={styles.buttonContainer}>
         <Button title="Cambiar Cámara" onPress={toggleFacing} />
         <Button title="Escanear INE" onPress={() => navigation.navigate('Votar')} />
@@ -37,11 +39,12 @@ function ScanIDScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   camera: {
     flex: 4,
-    width: '100%'
+    width: '100%',
+    margin: 10
   },
   buttonContainer: {
     flex: 1,

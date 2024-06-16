@@ -1,77 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
-import { RNCamera } from 'react-native-camera';
+import React, { useState, useEffect, useRef } from 'react';
+import { Camera } from 'expo-camera';
+import * as FaceDetector from 'expo-face-detector';
+import { View, StyleSheet } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 
 const FaceDetectionScreen = ({ navigation }) => {
-  const [hasPermission, setHasPermission] = useState(null);
-
-  useEffect(() => {
-    const requestCameraPermission = async () => {
-      try {
-        const { status } = await RNCamera.requestPermissions();
-        setHasPermission(status === 'granted');
-      } catch (error) {
-        console.error("Camera permission error:", error);
-        Alert.alert("Error", "No se pudo obtener el permiso de la cámara.");
-      }
-    };
-
-    requestCameraPermission();
-  }, []);
+  const isFocused = useIsFocused();
 
   const handleFacesDetected = ({ faces }) => {
-    if (faces.length === 0) {
-      Alert.alert(
-        'No Face Detected',
-        'No se detectó ningún rostro. Serás redirigido a la pantalla de inicio.',
-        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
-      );
+    if (faces == undefined || faces.length === 0) {
+      //alert('No se detectó ninguna cara');
+      //navigation.navigate('Login');
     }
   };
 
-  if (hasPermission === null) {
-    return <View style={styles.centered}><Text>Solicitando permisos de cámara...</Text></View>;
-  }
-  if (hasPermission === false) {
-    return <View style={styles.centered}><Text>No se tienen permisos para usar la cámara</Text></View>;
-  }
-
   return (
     <View style={styles.container}>
-      <RNCamera
+      {isFocused && <Camera
         style={styles.camera}
-        type={RNCamera.Constants.Type.front}
+        type={Camera.Constants.Type.front}
         onFacesDetected={handleFacesDetected}
-        faceDetectionMode={RNCamera.Constants.FaceDetection.Mode.fast}
-      >
-        <View style={styles.buttonContainer}>
-          <Button title="Cerrar Sesión" onPress={() => navigation.navigate('Login')} />
-        </View>
-      </RNCamera>
+        faceDetectorSettings={{
+          mode: FaceDetector.FaceDetectorMode.fast,
+          detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
+          runClassifications: FaceDetector.FaceDetectorClassifications.none,
+          minDetectionInterval: 100,
+          tracking: true,
+        }}
+      />}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black'
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'flex-end', // Alinear la cámara hacia el lado derecho
+    paddingTop: 0, // Espacio superior para que no esté justo en el border superior
   },
   camera: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center'
+    width: 100, // Ancho pequeño para la cámara
+    height: 150, // Altura pequeña para la cámara
   },
-  buttonContainer: {
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    margin: 20
-  }
 });
 
 export default FaceDetectionScreen;

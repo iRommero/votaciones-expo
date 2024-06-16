@@ -1,50 +1,43 @@
-const candidates = [
-  {
-    id: 1,
-    name: "Xochitl Gálvez",
-    party: "Partido Acción Nacional",
-    proposals: [
-      "Mejora de infraestructura educativa.",
-      "Ampliación del acceso a servicios de salud mental.",
-      "Desarrollo de programas de energías renovables."
-    ],
-    image: require('../assets/x.webp')
-  },
-  {
-    id: 2,
-    name: "Claudia Sheinbaum",
-    party: "Morena",
-    proposals: [
-      "Expansión del sistema de transporte público.",
-      "Incremento en la inversión en ciencia y tecnología.",
-      "Fortalecimiento de políticas de igualdad de género."
-    ],
-    image: require('../assets/cs.webp')
-  },
-  {
-    id: 3,
-    name: "Maynez",
-    party: "Movimiento Ciudadano",
-    proposals: [
-      "Reforma fiscal para impulsar la economía.",
-      "Aumento del presupuesto en seguridad pública.",
-      "Programas de apoyo a pequeñas y medianas empresas."
-    ],
-    image: require('../assets/m.jpg')
-  }
-];
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, View, StyleSheet, Image } from 'react-native';
 import { Card, Button } from 'react-native-paper';
+import FaceDetectionScreen from './FaceDetectionScreen';
+import CandidateService from '../services/CandidateService';
+
+let paddingTop = 160;
 
 function CandidatesScreen({ navigation }) {
+  const [candidates, setCandidates] = useState([]);
+
+  const images = {
+    'antuna.jpg': require('../assets/icon/img/antuna.jpg'),
+    'frank.jpg': require('../assets/icon/img/frank.jpg'),
+    'guimel.jpg': require('../assets/icon/img/guimel.jpg'),
+  }
+
+  useEffect(() => {
+    getCandidates();
+  }, [])
+
+  const getCandidates = async () => {
+    try {
+      const candidateService = new CandidateService();
+      const candidates = await candidateService.getCandidates();
+      setCandidates(candidates);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
       <Card.Title
-        title={item.name}
-        subtitle={item.party}
-        left={(props) => <Image {...props} source={item.image} style={styles.image} />}
+        title={item.nombre}
+        subtitle={item.partido.nombre}
+        left={(props) => <Image {...props} source={item.imagen.includes('assets')
+          ? images[item.imagen.split('/').pop()]  // Usa directamente el objeto
+          : { uri: item.imagen }}
+          style={styles.image} />}
       />
       <Card.Actions>
         <Button mode="text" onPress={() => navigation.navigate('DetalleDelCandidato', { candidate: item })}>
@@ -56,11 +49,15 @@ function CandidatesScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      { }
+      <View style={styles.faceDetectionContainer}>
+        <FaceDetectionScreen navigation={navigation} />
+      </View>
       <FlatList
         data={candidates}
         renderItem={renderItem}
         keyExtractor={item => item.id.toString()}
-        contentContainerStyle={{ paddingBottom: 50 }}
+        contentContainerStyle={styles.listContainer}
       />
       <View style={styles.buttonContainer}>
         <Button mode="contained" onPress={() => navigation.navigate('ResultadosVotacion')}>
@@ -76,6 +73,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between'
   },
+  faceDetectionContainer: {
+    width: '100%',
+    height: 150,  // Ajusta esto según el tamaño de la cámara
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    zIndex: 1,  // Asegura que la cámara esté sobre los otros elementos
+    padding: 10
+  },
+  listContainer: {
+    paddingTop: paddingTop,  // Ajusta esto para que las tarjetas comiencen debajo de la cámara
+  },
   card: {
     margin: 10,
     elevation: 2,
@@ -86,7 +95,7 @@ const styles = StyleSheet.create({
     borderRadius: 25
   },
   buttonContainer: {
-    padding: 50
+    padding: 20  // Reducido de 50 para más consistencia en la interfaz
   }
 });
 

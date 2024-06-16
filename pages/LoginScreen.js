@@ -1,14 +1,26 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, Card, Title, Provider as PaperProvider } from 'react-native-paper';
+import LoginService from '../services/LoginService';
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = React.useState('');
+  const [nombreUsuario, setNombreUsuario] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const handleLogin = () => {
-    console.log('Login attempt with:', email, password);
-    navigation.navigate('Identificarse');
+  const handleLogin = async () => {
+    if(!nombreUsuario || !password) {
+      alert('Por favor, rellena todos los campos');
+      return;
+    }
+
+    try {
+      const loginService = new LoginService();
+      await loginService.login(nombreUsuario, password);
+      navigation.navigate('Identificarse');
+    } catch (error) {
+      alert('Usuario o contraseña incorrectos');
+      console.error(error);
+    }
   };
 
   return (
@@ -18,9 +30,9 @@ const LoginScreen = ({ navigation }) => {
           <Card.Content>
             <Title style={styles.title}>Iniciar sesión</Title>
             <TextInput
-              label="Correo electrónico"
-              value={email}
-              onChangeText={text => setEmail(text)}
+              label="Usuario"
+              value={nombreUsuario}
+              onChangeText={text => setNombreUsuario(text)}
               mode="outlined"
               style={styles.input}
               autoCapitalize="none"

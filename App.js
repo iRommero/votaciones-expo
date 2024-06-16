@@ -6,6 +6,8 @@ import ScanIDScreen from './pages/ScanIDScreen';
 import CandidatesScreen from './pages/CandidatesScreen.js';
 import CandidateDetailsScreen from './pages/CandidateDetailsScreen.js';
 import VotingResultsScreen from './pages/VotingResultsScreen.js';
+import FaceDetectionScreen from './pages/FaceDetectionScreen.js';
+
 
 const Stack = createStackNavigator();
 
@@ -18,6 +20,7 @@ function App() {
          <Stack.Screen name="Votar" component={CandidatesScreen} />
          <Stack.Screen name="DetalleDelCandidato" component={CandidateDetailsScreen} />
           <Stack.Screen name="ResultadosVotacion" component={VotingResultsScreen} />
+          <Stack.Screen name="FaceScan" component={FaceDetectionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
